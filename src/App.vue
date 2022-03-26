@@ -1,7 +1,17 @@
 <template>
     <div class="container">
-       <Header title="Task Manager" />
-       <Tasks @toogle-reminder="toogleReminder" @delete-task="deleteTask" :tasks="tasks" />
+       <Header 
+       @toggle-add-form="toggleAddTask"
+       :showAddTask="showAddTask"
+        title="Task Manager" />
+
+      <div v-show="showAddTask">
+          <AddTask @add-task='addTask' />
+      </div>
+
+       <Tasks 
+        @toggle-reminder="toggleReminder"
+        @delete-task="deleteTask" :tasks="tasks" />
     </div>
 
 </template>
@@ -9,30 +19,46 @@
 <script>
 import Header from './components/Header'
 import Tasks from './components/Tasks'
+import AddTask from './components/AddTask.vue'
 
 export default {
   name: 'App',
   components: {
    Header, 
-   Tasks
+   Tasks,
+   AddTask
   },
 
   data(){
     return {
-      tasks: []
+      tasks: [],
+      showAddTask:false
     }
   },
 
   methods:{
+
+     addTask(task){
+      this.tasks =[...this.tasks, task];
+    },
+
     deleteTask(id){
      if(confirm('Are you sure you want to delete')){
        this.tasks = this.tasks.filter((task) => task.id !== id)
      }
     },
 
-    toogleReminder(id){
-      console.log(id)
+    toggleReminder(id){
+      this.tasks = this.tasks.map((task)=> task.id === id
+      ? {...task, reminder: !task.reminder}: task
+      )
+    },
+
+    toggleAddTask(){
+      this.showAddTask = !this.showAddTask
     }
+
+   
     
   },
   
